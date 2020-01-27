@@ -4,8 +4,9 @@ import random
 import gtts
 from discord.ext import commands
 import discord
+import requests
 
-token = "NjcwNzA4NzUwNzM4MjYwMDIw.XiyVHg.lNj_082ji-WSWba4O0vYlEvVRkA"
+token = ""
 bot = commands.Bot(command_prefix='$')
 LANG = 'uk'
 SLOW = False
@@ -57,7 +58,7 @@ async def bc():
     await bot.wait_until_ready()
     while True:
         print("h")
-        await asyncio.sleep(random.randint(100, 86000))
+        await asyncio.sleep(random.randint(1, 100))
         await hate_rand()
 
 
@@ -155,7 +156,7 @@ async def isSlow(ctx: commands.Context):
 
 
 @bot.command()
-async def hate(ctx, member: discord.Member, reason="он пидр", lang=LANG, slow=SLOW):
+async def hate(ctx, member: discord.Member, reason="он пидр", language=LANG, slow=SLOW):
     await ctx.channel.purge(limit=1)
     try:
         chan = ctx.message.author.voice.channel
@@ -166,7 +167,9 @@ async def hate(ctx, member: discord.Member, reason="он пидр", lang=LANG, s
 
     text = f'хетим {member.display_name} по причине {reason}'
     await ctx.send(text)
-    out = gtts.gTTS(text=text, lang=lang, slow=slow)
+    if not language:
+        language = LANG
+    out = gtts.gTTS(text=text, lang=language, slow=slow)
     out.save('hate.mp3')
     print("done")
     audio_source = discord.FFmpegPCMAudio('hate.mp3')
@@ -178,7 +181,7 @@ async def hate(ctx, member: discord.Member, reason="он пидр", lang=LANG, s
 
 
 @bot.command()
-async def hateEveryone(ctx: commands.Context, reason="клоун", lang=LANG, slow=SLOW):
+async def hateEveryone(ctx: commands.Context, reason="клоун", language=LANG, slow=SLOW):
     await ctx.channel.purge(limit=1)
     guild: discord.Guild = ctx.guild
     members = guild.members
@@ -192,7 +195,9 @@ async def hateEveryone(ctx: commands.Context, reason="клоун", lang=LANG, sl
 
         text = f'хетим {member.display_name} по причине {reason}'
         await ctx.send(text)
-        out = gtts.gTTS(text=text, lang=lang, slow=slow)
+        if not language:
+            language = LANG
+        out = gtts.gTTS(text=text, lang=language, slow=slow)
         out.save('hate.mp3')
         print("done")
         audio_source = discord.FFmpegPCMAudio('hate.mp3')
@@ -204,7 +209,7 @@ async def hateEveryone(ctx: commands.Context, reason="клоун", lang=LANG, sl
 
 
 @bot.command()
-async def hateRand(ctx: commands.Context, reason="клоун", lang=LANG, slow=SLOW):
+async def hateRand(ctx: commands.Context, reason="клоун", language=LANG, slow=SLOW):
     global LAST_MEMBER
     guild: discord.Guild = ctx.guild
     members = guild.members
@@ -217,13 +222,13 @@ async def hateRand(ctx: commands.Context, reason="клоун", lang=LANG, slow=S
         print(e)
     LAST_MEMBER = member
     await member.add_roles(role)
-    await hate(ctx, member, reason, lang, slow)
+    await hate(ctx, member, reason, language, slow)
 
 
 @bot.command()
-async def hateMe(ctx: commands.Context, reason="клоун", lang=LANG, slow=SLOW):
+async def hateMe(ctx: commands.Context, reason="клоун", language=LANG, slow=SLOW):
     member = ctx.author
-    await hate(ctx, member, reason, lang, slow)
+    await hate(ctx, member, reason, language, slow)
 
 
 @bot.command()
@@ -288,6 +293,22 @@ async def play(ctx, arg, language=None, slow=SLOW):
         voice_client.play(audio_source, after=None)
 
 
+@bot.command()
+async def joke(ctx):
+    r = requests.get(url='http://anek.ws/anekdot/export8.php')
+    text = r.text.replace("<br />", "")
+    text = text.replace("&quot", "")
+    text = text.split(">")[2].split("</")[0]
+    await ctx.send(text)
+    await play(ctx, text)
+
+@bot.command()
+async def call(ctx):
+    text = "Илья Илья, ИЛЬЯ, ИлЬя, иЛЬЯ, ИльЯ. Ильяилльяильяильяиль иииииииииииииииииииилллллллья ильяяяяя яяяяя и и  иильяяяя илья"
+    await ctx.send(text)
+    await play(ctx, text)
+
+
 # @bot.command()
 # async def env(ctx: commands.Context):
 #     guild: discord.Guild = ctx.guild
@@ -295,4 +316,5 @@ async def play(ctx, arg, language=None, slow=SLOW):
 
 
 bot.loop.create_task(bc())
+
 bot.run(token)
