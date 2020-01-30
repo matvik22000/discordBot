@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="WebServers">
+    <option name="servers">
+      <webServer id="6c18b7fc-d118-4d2f-9cb4-1a359cce220f" name="discordBot" url="http://192.168.1.219">
+        <fileTransfer host="192.168.1.219" port="22" rootFolder="/home/pi/discord/bots/discordBot" accessType="SFTP">
+          <advancedOptions>
+            <advancedOptions dataProtectionLevel="Private" passiveMode="true" shareSSLContext="true" />
+          </advancedOptions>
+          <option name="port" value="22" />
+        </fileTransfer>
+      </webServer>
+    </option>
+  </component>
+</project>
